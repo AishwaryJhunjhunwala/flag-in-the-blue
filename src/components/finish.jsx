@@ -74,7 +74,7 @@ export default function HintBox() {
                      w-[95%] max-w-4xl 
                      text-white text-center p-12 md:p-16 
                      flex flex-col items-center justify-center 
-                     shadow-2xl z-50 rounded-4xl
+                      z-50 rounded-4xl
                      "
           style={{ 
             backgroundImage: `url(${popupBoxImg})`, 
@@ -140,7 +140,7 @@ export default function HintBox() {
             className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
                        w-[90%] max-w-2xl 
                        text-white text-center p-8 md:p-12 
-                       flex flex-col items-center justify-center shadow-2xl z-[70]"
+                       flex flex-col items-center justify-center  z-[70]"
             style={{ 
               backgroundImage: `url(${popupBoxImg})`, 
               backgroundSize: '100% 100%',

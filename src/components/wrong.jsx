@@ -75,7 +75,7 @@ export default function HintBox() {
                      w-[95%] max-w-4xl 
                      text-white text-center p-12 md:p-16 
                      flex flex-col items-center justify-center 
-                     shadow-2xl z-50 rounded-4xl
+                      z-50 rounded-4xl
                      "
           style={{ 
             backgroundImage: `url(${popupBoxImg})`, 
