@@ -1,6 +1,7 @@
 import { getDocs, collection } from "firebase/firestore";
 import { db } from "../config/firebase.jsx";
 import { useEffect, useState, useMemo } from "react";
+import { useCallback } from 'react';
 
 function Leaderboard() {
   //DEFINING STATES
@@ -8,7 +9,7 @@ function Leaderboard() {
   const [info, setInfo] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const getScores = async () => {
+  const getScores = useCallback(async () => {
     try {
       //Defining collection reference
       const refScores = collection(db, "scores");
@@ -19,9 +20,9 @@ function Leaderboard() {
     } catch (error) {
       console.error("Error fetching scores: ", error);
     }
-  };
+  }, []);
 
-  const getUserInfo = async () => {
+  const getUserInfo = useCallback(async () => {
     try {
       //Defining collection reference
       const refUsers = collection(db, "users");
@@ -33,7 +34,7 @@ function Leaderboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const combined = useMemo(() => {
     return board
