@@ -5,6 +5,7 @@ import { Suspense, lazy } from "react";
 const RegisterUser = lazy(() => import("./pages/register.jsx"));
 const Game = lazy(() => import("./pages/game.jsx"));
 const Login = lazy(() => import("./pages/login.jsx"));
+const Leaderboard = lazy(() => import("./pages/leaderboard.jsx"));
 
 function App() {
     return (
@@ -18,6 +19,8 @@ function App() {
                     <Route path="/register" element={<RegisterUser />} />
                     <Route path="/game" element={<Game />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/leaderboard" element={<Leaderboard />} />
+
                 </Routes>
             </Suspense>
         </ThemeProvider>
