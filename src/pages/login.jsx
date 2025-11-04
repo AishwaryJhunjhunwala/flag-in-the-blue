@@ -1,49 +1,58 @@
 import { useState } from "react";
-import { db } from "../firebase/firebase.jsx";
+import { db } from "@/firebase/firebase.js";
 import { collection, query, where, getDocs} from "firebase/firestore";
 import bcrypt from "bcryptjs";
 import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
-export default function loginUser() {
-   const [phone, setPhone] = useState("");
+export default function Login() {
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleLogin(e) {
+    setLoading(true);
+   try {
     e.preventDefault();
-
-    //query to check if user exists
-    const q = query(collection(db, "users"), where("phone", "==", phone));
+    console.log(phone,password)
+    const q = query(
+      collection(db, "users"),
+      where("phone", "==", phone),
+    );
     const snap = await getDocs(q);
-    if (snap.empty) {
-        alert("Phone number not registered!");
+    if (!snap.empty) {
+      const user = snap.docs[0].data();
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        toast.error("Invalid phone number or password!");
         return;
-    }
+      }
 
-    // check password
-    let userData; 
-    snap.forEach((doc) => {
-      userData = doc.data();
-    });
-
-    const passwordMatch = await bcrypt.compare(password, userData.password);
-    if (!passwordMatch) {
-      alert("Invalid password!");
+      
+      localStorage.setItem("uid", (snap.docs[0].id ));
+    } else {
+      toast.error("Invalid phone number or password!");
       return;
     }
 
-    alert("User logged in successfully!");
+    toast.success("Login successful!");
+
     setPhone("");
     setPassword("");
+   } catch (error) {
+    console.error("Error during login:", error);
+    toast.error("An error occurred during login. Please try again.");
+   }finally{
+    setLoading(false);
+   }
   }
 
   return (
@@ -62,7 +71,7 @@ export default function loginUser() {
               <Input
                 id="phone"
                 type="tel"
-                placeholder="9876543210"
+                placeholder=""
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
@@ -81,20 +90,13 @@ export default function loginUser() {
               />
             </div>
 
-            <Button type="submit" className="w-full">
-              Log In
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Logging in..." : "Log In"}
             </Button>
           </form>
         </CardContent>
 
-        <CardFooter className="flex justify-center">
-          <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <a href="/register" className="text-primary hover:underline">
-              Sign up
-            </a>
-          </p>
-        </CardFooter>
+        
       </Card>
     </div>
   );

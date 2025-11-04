@@ -4,6 +4,7 @@ import { Suspense, lazy } from "react";
 
 const RegisterUser = lazy(() => import("./pages/register.jsx"));
 const Game = lazy(() => import("./pages/game.jsx"));
+const Login = lazy(() => import("./pages/login.jsx"));
 
 function App() {
     return (
@@ -12,10 +13,11 @@ function App() {
                 <Routes>
                     <Route
                         path="/"
-                        element={<Navigate to="/register" replace />}
+                        element={<Navigate to="/login" replace />}
                     />
                     <Route path="/register" element={<RegisterUser />} />
                     <Route path="/game" element={<Game />} />
+                    <Route path="/login" element={<Login />} />
                 </Routes>
             </Suspense>
         </ThemeProvider>
