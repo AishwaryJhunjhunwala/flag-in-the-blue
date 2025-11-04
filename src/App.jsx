@@ -6,6 +6,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { Suspense, lazy } from "react";
 
 const RegisterUser = lazy(() => import("./pages/register.jsx"));
+const Leaderboard = lazy(() => import("./pages/leaderboard.jsx"));
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/register" replace />} />
           <Route path="/register" element={<RegisterUser />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
         </Routes>
       </Suspense>
     </ThemeProvider>

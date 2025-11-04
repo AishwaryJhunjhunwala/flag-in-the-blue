@@ -1,6 +1,6 @@
 import { getDocs, collection } from "firebase/firestore";
 import { db } from "../config/firebase.js";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useCallback } from "react";
 
 function Leaderboard() {
