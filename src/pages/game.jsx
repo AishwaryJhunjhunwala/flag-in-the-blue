@@ -20,11 +20,12 @@ function Game() {
         }
     }
 
-    useEffect(() => {
-        if (!alreadyLoggedIn()) {
-            window.location.href = "/login";
-        }
-    }, []);
+    // commented out for dev purpose. uncomment in production
+    // useEffect(() => {
+    //     if (!alreadyLoggedIn()) {
+    //         window.location.href = "/login";
+    //     }
+    // }, []);
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center">
