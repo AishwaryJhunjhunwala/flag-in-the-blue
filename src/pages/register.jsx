@@ -22,6 +22,7 @@ export default function registerUser() {
     phone: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const updateField = (field) => (value) => {
     setFormData((prev) => ({
@@ -31,53 +32,65 @@ export default function registerUser() {
   };
 
   async function handleRegister(e) {
-    e.preventDefault();
-    const { name, email, phone, password } = formData;
+    setLoading(true);
+    try {
+      e.preventDefault();
+      const { name, email, phone, password } = formData;
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(email)) {
-      toast.error("Please enter a valid email address!");
-      return;
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) {
+        toast.error("Please enter a valid email address!");
+        return;
+      }
+
+      const phoneRegex = /^[0-9]{10}$/;
+      if (!phoneRegex.test(phone)) {
+        toast.error("Please enter a valid 10-digit phone number!");
+        return;
+      }
+
+      const usersRef = collection(db, "users");
+      const q = query(
+        usersRef,
+        or(where("phone", "==", phone), where("email", "==", email))
+      );
+
+      const snap = await getDocs(q);
+
+      if (!snap.empty) {
+        const data = snap.docs[0].data();
+        if (data.phone === phone) {
+          toast.error("Phone number already registered!");
+        } else if (data.email === email) {
+          toast.error("Email already registered!");
+        }
+        return;
+      }
+
+      //password hasing
+      const hashed = await bcrypt.hash(password, 10);
+
+      // save user
+      await addDoc(collection(db, "users"), {
+        name,
+        phone,
+        password: hashed,
+        email,
+      });
+
+      toast.success("User registered successfully!");
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        password: "",
+      });
+    } catch (error) {
+      toast.error("Some error occurred");
+      console.error("Error: ", e);
+    } finally {
+      setLoading(false);
     }
-
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!phoneRegex.test(phone)) {
-      toast.error("Please enter a valid 10-digit phone number!");
-      return;
-    }
-
-    const q = query(collection(db, "users"), where("phone", "==", phone));
-    const snap = await getDocs(q);
-    if (!snap.empty) {
-      toast.error("Phone number already registered!");
-      return;
-    }
-
-    const q2 = query(collection(db, "users"), where("email", "==", email));
-    const snap2 = await getDocs(q2);
-    if (!snap2.empty) {
-      toast.error("Email already registered!");
-      return;
-    }
-
-    //password hasing
-    const hashed = await bcrypt.hash(password, 10);
-
-    // save user
-    await addDoc(collection(db, "users"), {
-      name,
-      phone,
-      password: hashed,
-      email,
-    });
-
-    toast.success("User registered successfully!");
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      password: "",
-    });
   }
 
   return (
@@ -151,20 +164,11 @@ export default function registerUser() {
               />
             </div>
 
-            <Button type="submit" className="w-full">
-              Sign Up
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Loading...." : "Submit"}
             </Button>
           </form>
         </CardContent>
-
-        <CardFooter className="flex justify-center">
-          <p className="text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <a href="/login" className="text-primary hover:underline">
-              Log in
-            </a>
-          </p>
-        </CardFooter>
       </Card>
     </div>
   );
