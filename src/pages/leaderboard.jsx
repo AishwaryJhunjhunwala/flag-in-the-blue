@@ -1,5 +1,5 @@
 import { getDocs, collection } from "firebase/firestore";
-import { db } from "@/firebase/firebase.js";
+import { db } from "@/firebase/firebase";
 import { useEffect, useState } from "react";
 import { useCallback } from "react";
 import {
@@ -45,7 +45,6 @@ function Leaderboard() {
 
       setInfo(sortedData);
     } catch (error) {
-      // Keep a single error log and fall back to an empty list
       console.error("Error fetching user info:", error);
       setInfo([]);
     } finally {
@@ -55,7 +54,7 @@ function Leaderboard() {
 
   useEffect(() => {
     getUserInfo();
-  }, [getUserInfo]);
+  }, []);
 
   const totalPages = Math.max(1, Math.ceil(info.length / itemsPerPage));
   const startIndex = (currentPage - 1) * itemsPerPage;
